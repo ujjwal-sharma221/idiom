@@ -1,5 +1,11 @@
+import { HeroSection } from "./_components/hero-section";
+
 const HomePage = () => {
-  return <div>Marketing Page</div>;
+  return (
+    <div className="">
+      <HeroSection />
+    </div>
+  );
 };
 
 export default HomePage;

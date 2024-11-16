@@ -63,9 +63,6 @@ export default {
             to: { backgroundPosition: "-200% 0" },
           },
         },
-        animation: {
-          shine: "shine 8s ease-in-out infinite",
-        },
       },
     },
   },

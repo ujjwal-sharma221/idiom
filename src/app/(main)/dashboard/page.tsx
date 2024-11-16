@@ -5,7 +5,7 @@ import { StickyWrapper } from "@/components/sticky-wrapper";
 import { FeedWrapper } from "@/components/feed-wrapper";
 import { Header } from "./_components/header";
 import { UserProgress } from "@/components/user-progress";
-import { getUserProgress } from "../../../../db/queries";
+import { getUnits, getUserProgress } from "../../../../db/queries";
 
 const DashboardPage = async () => {
   const { isAuthenticated } = getKindeServerSession();
@@ -13,7 +13,11 @@ const DashboardPage = async () => {
   if (!user) redirect("/");
 
   const userProgressData = getUserProgress();
-  const [userProgress] = await Promise.all([userProgressData]);
+  const unitsData = getUnits();
+  const [userProgress, units] = await Promise.all([
+    userProgressData,
+    unitsData,
+  ]);
 
   if (!userProgress || !userProgress.activeCourse) redirect("/courses");
 
@@ -29,6 +33,11 @@ const DashboardPage = async () => {
       </StickyWrapper>
       <FeedWrapper>
         <Header title={userProgress.activeCourse.title} />
+        {units.map((unit) => (
+          <div key={unit.id} className="mb-10">
+            {JSON.stringify(unit)}
+          </div>
+        ))}
       </FeedWrapper>
     </div>
   );

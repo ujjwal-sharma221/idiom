@@ -14,6 +14,11 @@ const main = async () => {
     console.log("Seeding db");
     await db.delete(schema.courses);
     await db.delete(schema.userProgress);
+    await db.delete(schema.units);
+    await db.delete(schema.lessons);
+    await db.delete(schema.challenges);
+    await db.delete(schema.challengeOptions);
+    await db.delete(schema.challengeProgress);
 
     await db.insert(schema.courses).values([
       { id: 1, title: "Spanish", imageSrc: "/images/spanish-flag.svg" },
@@ -21,6 +26,57 @@ const main = async () => {
       { id: 3, title: "French", imageSrc: "/images/french-flag.svg" },
       { id: 4, title: "German", imageSrc: "/images/german-flag.svg" },
       { id: 5, title: "Japnese", imageSrc: "/images/japanese-flag.svg" },
+    ]);
+
+    await db.insert(schema.units).values([
+      {
+        id: 1,
+        courseId: 1,
+        title: "Unit one",
+        description: "Learn the basics of Spanish",
+        order: 1,
+      },
+    ]);
+
+    await db
+      .insert(schema.lessons)
+      .values([{ id: 1, unitId: 1, order: 1, title: "nouns" }]);
+
+    await db.insert(schema.challenges).values([
+      {
+        id: 1,
+        lessonId: 1,
+        type: "SELECT",
+        order: 1,
+        question: 'Which of these is a "man"?',
+      },
+    ]);
+
+    await db.insert(schema.challengeOptions).values([
+      {
+        id: 1,
+        challengeId: 1,
+        imageSrc: "/challenge-items/man.svg",
+        correct: true,
+        text: "el hombre",
+        audioSrc: "/audio",
+      },
+      {
+        id: 2,
+        challengeId: 1,
+        imageSrc: "/challenge-items/woman.svg",
+        correct: false,
+        text: "la mujer",
+        audioSrc: "/audio",
+      },
+      {
+        id: 3,
+        challengeId: 1,
+        imageSrc: "/challenge-items/robot.svg",
+        correct: false,
+        text: "el robot",
+        audioSrc: "/audio",
+      },
     ]);
 
     console.log("seeding finished");

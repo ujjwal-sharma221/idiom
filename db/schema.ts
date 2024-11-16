@@ -47,7 +47,7 @@ export const challenges = pgTable("challenges", {
   order: integer("order").notNull(),
 });
 
-export const challengeOptions = pgTable("challengeOptions", {
+export const challengeOptions = pgTable("challenge_options", {
   id: serial("id").primaryKey(),
   challengeId: integer("challenge_id")
     .references(() => challenges.id, {
@@ -60,7 +60,7 @@ export const challengeOptions = pgTable("challengeOptions", {
   audioSrc: text("audio_src"),
 });
 
-export const challengeProgress = pgTable("challengeProgress", {
+export const challengeProgress = pgTable("challenge_progress", {
   id: serial("id").primaryKey(),
   userId: text("user_id").notNull(),
   challengeId: integer("challenge_id")

@@ -27,7 +27,7 @@ export function List({ courses, activeCourseId }: ListProps) {
   };
 
   return (
-    <div className="pt-6 flex-wrap lg:flex-nowrap items-center justify-center lg:ml-20 gap-4 flex">
+    <div className="pt-6 flex-wrap items-center gap-4 flex w-svw">
       {courses.map((course) => (
         <Card
           key={course.id}

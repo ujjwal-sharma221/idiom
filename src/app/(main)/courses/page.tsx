@@ -13,7 +13,7 @@ const CoursesPage = async () => {
   const userProgress = await getUserProgress();
 
   return (
-    <div className="h-full px-3 mx-auto lg:ml-14">
+    <div className="h-full px-3 mx-auto lg:ml-14 w-full">
       <h1 className="text-2xl font-bold text-center lg:text-start text-neutral-700">
         Language Courses
       </h1>

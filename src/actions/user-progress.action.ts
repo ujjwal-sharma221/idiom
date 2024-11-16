@@ -26,7 +26,7 @@ export async function upsertUser(courseId: number) {
 
     revalidatePath("/courses");
     revalidatePath("/dashboard");
-    redirect("/dashboard");
+    return redirect("/dashboard");
   }
 
   await db.insert(userProgress).values({

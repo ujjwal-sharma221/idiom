@@ -3,9 +3,10 @@ import Image from "next/image";
 import { InfinityIcon } from "lucide-react";
 
 import { Button } from "./ui/button";
+import { courses } from "../../db/schema";
 
 interface UserProgressProps {
-  activeCourse: { imageSrc: string; title: string };
+  activeCourse: typeof courses.$inferSelect;
   hearts: number;
   points: number;
   hasActiveSubscription: boolean;
@@ -18,9 +19,9 @@ export function UserProgress({
   hasActiveSubscription,
 }: UserProgressProps) {
   return (
-    <div className="flex items-center justify-between gap-x-2">
+    <div className="flex items-center justify-between gap-x-6">
       <Link href="/courses">
-        <Button variant="outline" size="icon">
+        <Button variant="ghost" size="sm">
           <Image
             src={activeCourse.imageSrc}
             alt={activeCourse.title}

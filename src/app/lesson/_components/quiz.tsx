@@ -25,6 +25,20 @@ export function Quiz({
 }: QuizProps) {
   const [hearts, setHearts] = useState(initialHearts);
   const [percentage, setPercentage] = useState(initialPercentage);
+  const [challenges] = useState(initialLessonChallenges);
+  const [activeIndex, setActiveIndex] = useState(() => {
+    const incompletedIndex = challenges.findIndex(
+      (challenge) => !challenge.completed,
+    );
+    return incompletedIndex === -1 ? 0 : incompletedIndex;
+  });
+
+  const challenge = challenges[activeIndex];
+
+  const title =
+    challenge.type === "ASSIST"
+      ? "Select the correct meaning"
+      : challenge.question;
 
   return (
     <>
@@ -33,6 +47,16 @@ export function Quiz({
         percentage={percentage}
         hasActiveSubscription={!!userSubscription}
       />
+      <div className="flex-1 ">
+        <div className="h-full flex items-center justify-center">
+          <div className="lg:min-h-[350px] lg:w-[600px] w-full px-6 lg:px-0 flex flex-col gap-y-12">
+            <h1 className="text-lg lg:text-3xl text-center lg:text-start font-bold ">
+              {title}
+            </h1>
+            <div></div>
+          </div>
+        </div>
+      </div>
     </>
   );
 }

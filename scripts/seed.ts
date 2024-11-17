@@ -38,9 +38,13 @@ const main = async () => {
       },
     ]);
 
-    await db
-      .insert(schema.lessons)
-      .values([{ id: 1, unitId: 1, order: 1, title: "nouns" }]);
+    await db.insert(schema.lessons).values([
+      { id: 1, unitId: 1, order: 1, title: "Nouns" },
+      { id: 2, unitId: 1, order: 2, title: "Verbs" },
+      { id: 3, unitId: 1, order: 3, title: "Verbs" },
+      { id: 4, unitId: 1, order: 4, title: "Verbs" },
+      { id: 5, unitId: 1, order: 5, title: "Verbs" },
+    ]);
 
     await db.insert(schema.challenges).values([
       {

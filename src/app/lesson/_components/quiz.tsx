@@ -7,6 +7,8 @@ import Image from "next/image";
 import { challengeOptionsType } from "@/lib/types/schem-types";
 import { Progress } from "@/components/ui/progress";
 import { useExitModal } from "@/store/use-exit-modal";
+import { QuestionBubble } from "./question-bubble";
+import { CurrentChallenge } from "./current-challenge";
 
 interface QuizProps {
   initialPercentage: number;
@@ -34,6 +36,7 @@ export function Quiz({
   });
 
   const challenge = challenges[activeIndex];
+  const options = challenge.challengeOptions ?? [];
 
   const title =
     challenge.type === "ASSIST"
@@ -53,7 +56,19 @@ export function Quiz({
             <h1 className="text-lg lg:text-3xl text-center lg:text-start font-bold ">
               {title}
             </h1>
-            <div></div>
+            <div>
+              {challenge.type === "ASSIST" && (
+                <QuestionBubble question={challenge.question} />
+              )}
+              <CurrentChallenge
+                options={options}
+                onSelect={() => {}}
+                status="none"
+                selectedOption={undefined}
+                disabled={false}
+                type={challenge.type}
+              />
+            </div>
           </div>
         </div>
       </div>

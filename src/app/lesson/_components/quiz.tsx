@@ -6,6 +6,7 @@ import Image from "next/image";
 
 import { challengeOptionsType } from "@/lib/types/schem-types";
 import { Progress } from "@/components/ui/progress";
+import { useExitModal } from "@/store/use-exit-modal";
 
 interface QuizProps {
   initialPercentage: number;
@@ -43,10 +44,12 @@ interface HeaderProps {
 }
 
 function Header({ hearts, hasActiveSubscription, percentage }: HeaderProps) {
+  const { open } = useExitModal();
+
   return (
     <header className="lg:pt-[50px] pt-[20px] px-10 flex gap-x-7 items-center justify-between max-w-[1140px] mx-auto w-full">
       <XIcon
-        onClick={() => {}}
+        onClick={open}
         className="text-zinc-700 hover:opacity-75 transition cursor-pointer"
       />
       <Progress value={percentage} />

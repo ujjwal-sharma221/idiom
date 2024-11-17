@@ -4,6 +4,7 @@ import { Toaster } from "sonner";
 
 import "./globals.css";
 import { AuthProvider } from "@/lib/providers/auth-provider";
+import { ExitModal } from "@/components/exit-modal";
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -20,8 +21,11 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${font.className} antialiased`}>
-        <AuthProvider>{children}</AuthProvider>
-        <Toaster position="top-right" closeButton />
+        <AuthProvider>
+          <Toaster position="top-right" closeButton />
+          <ExitModal />
+          {children}
+        </AuthProvider>
       </body>
     </html>
   );

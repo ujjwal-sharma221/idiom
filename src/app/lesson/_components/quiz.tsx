@@ -6,7 +6,7 @@ import Image from "next/image";
 import { toast } from "sonner";
 import Confetti from "react-confetti";
 import { useRouter } from "next/navigation";
-import { useWindowSize } from "react-use";
+import { useMount, useWindowSize } from "react-use";
 
 import { challengeOptionsType } from "@/lib/types/schem-types";
 import { Progress } from "@/components/ui/progress";
@@ -17,6 +17,8 @@ import { Footer } from "./footer";
 import { upsertChallengeProgress } from "@/actions/challenge-progress";
 import { reduceHearts } from "@/actions/user-progress.action";
 import { ResultCard } from "./result-card";
+import { useHeartsModal } from "@/store/use-hearts-modal";
+import { usePracticeModal } from "@/store/use-practice-modal";
 
 interface QuizProps {
   initialPercentage: number;
@@ -34,7 +36,9 @@ export function Quiz({
   userSubscription,
 }: QuizProps) {
   const [hearts, setHearts] = useState(initialHearts);
-  const [percentage, setPercentage] = useState(initialPercentage);
+  const [percentage, setPercentage] = useState(() => {
+    return initialPercentage === 100 ? 0 : initialPercentage;
+  });
   const [challenges] = useState(initialLessonChallenges);
   const [activeIndex, setActiveIndex] = useState(() => {
     const incompletedIndex = challenges.findIndex(
@@ -47,10 +51,17 @@ export function Quiz({
   const [lessonId] = useState(intialLessonId);
 
   const [pending, startTransition] = useTransition();
-
   const router = useRouter();
-
   const { width, height } = useWindowSize();
+
+  const { open: openHeartsModal } = useHeartsModal();
+  const { open: openPracticeModal } = usePracticeModal();
+
+  useMount(() => {
+    if (initialPercentage === 100) {
+      openPracticeModal();
+    }
+  });
 
   const challenge = challenges[activeIndex];
 
@@ -138,7 +149,7 @@ export function Quiz({
         upsertChallengeProgress(challenge.id)
           .then((res) => {
             if (res?.error === "hearts") {
-              console.error("Not enough hearts");
+              openHeartsModal();
               return;
             }
 
@@ -156,7 +167,7 @@ export function Quiz({
         reduceHearts(challenge.id)
           .then((res) => {
             if (res?.error === "hearts") {
-              console.error("Missing hearts, you are gay!");
+              openHeartsModal();
               return;
             }
             setStatus("wrong");

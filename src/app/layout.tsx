@@ -5,6 +5,8 @@ import { Toaster } from "sonner";
 import "./globals.css";
 import { AuthProvider } from "@/lib/providers/auth-provider";
 import { ExitModal } from "@/components/exit-modal";
+import { HeartsModal } from "@/components/hearts-modal";
+import { PracticeModal } from "@/components/practice-modal";
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -24,6 +26,8 @@ export default function RootLayout({
         <AuthProvider>
           <Toaster position="top-right" closeButton />
           <ExitModal />
+          <HeartsModal />
+          <PracticeModal />
           {children}
         </AuthProvider>
       </body>

@@ -4,6 +4,9 @@ import { useState, useTransition } from "react";
 import { InfinityIcon, XIcon } from "lucide-react";
 import Image from "next/image";
 import { toast } from "sonner";
+import Confetti from "react-confetti";
+import { useRouter } from "next/navigation";
+import { useWindowSize } from "react-use";
 
 import { challengeOptionsType } from "@/lib/types/schem-types";
 import { Progress } from "@/components/ui/progress";
@@ -13,6 +16,7 @@ import { CurrentChallenge } from "./current-challenge";
 import { Footer } from "./footer";
 import { upsertChallengeProgress } from "@/actions/challenge-progress";
 import { reduceHearts } from "@/actions/user-progress.action";
+import { ResultCard } from "./result-card";
 
 interface QuizProps {
   initialPercentage: number;
@@ -23,7 +27,7 @@ interface QuizProps {
 }
 
 export function Quiz({
-  // intialLessonId,
+  intialLessonId,
   initialHearts,
   initialPercentage,
   initialLessonChallenges,
@@ -40,10 +44,60 @@ export function Quiz({
   });
   const [selectedOption, setSelectedOption] = useState<number>();
   const [status, setStatus] = useState<"none" | "correct" | "wrong">("none");
+  const [lessonId] = useState(intialLessonId);
 
   const [pending, startTransition] = useTransition();
 
+  const router = useRouter();
+
+  const { width, height } = useWindowSize();
+
   const challenge = challenges[activeIndex];
+
+  if (!challenge) {
+    return (
+      <>
+        <Confetti
+          recycle={false}
+          numberOfPieces={500}
+          tweenDuration={10000}
+          width={width}
+          height={height}
+        />
+        <div className="flex flex-col gap-y-4 lg:gap-y-8 max-w-lg mx-auto text-center items-center justify-center h-screen">
+          <Image
+            src="/icons/confetti.svg"
+            alt="confetti"
+            className="hidden animate-shine lg:block"
+            height={100}
+            width={100}
+          />
+          <Image
+            src="/icons/confetti.svg"
+            alt="confetti"
+            className="lg:hidden animate-shine  block"
+            height={50}
+            width={50}
+          />
+
+          <h1 className="text-xl lg:text-3xl font-bold">
+            Great Job! <br />
+            You have completed this lesson. Forward with your language journey
+          </h1>
+          <div className="flex items-center gap-x-4 w-full">
+            <ResultCard variant="points" value={challenges.length * 10} />
+            <ResultCard variant="hearts" value={hearts} />
+          </div>
+        </div>
+        <Footer
+          status="completed"
+          onCheck={() => router.push("/dashboard")}
+          lessonId={lessonId}
+        />
+      </>
+    );
+  }
+
   const options = challenge.challengeOptions ?? [];
 
   const title =

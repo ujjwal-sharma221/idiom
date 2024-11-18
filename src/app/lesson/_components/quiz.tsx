@@ -12,6 +12,7 @@ import { QuestionBubble } from "./question-bubble";
 import { CurrentChallenge } from "./current-challenge";
 import { Footer } from "./footer";
 import { upsertChallengeProgress } from "@/actions/challenge-progress";
+import { reduceHearts } from "@/actions/user-progress.action";
 
 interface QuizProps {
   initialPercentage: number;
@@ -97,7 +98,21 @@ export function Quiz({
           .catch(() => toast.error("Something went wrong, try again"));
       });
     } else {
-      console.log("wrong, you are gay");
+      startTransition(() => {
+        reduceHearts(challenge.id)
+          .then((res) => {
+            if (res?.error === "hearts") {
+              console.error("Missing hearts, you are gay!");
+              return;
+            }
+            setStatus("wrong");
+
+            if (!res?.error) {
+              setHearts((prev) => Math.max(prev - 1, 0));
+            }
+          })
+          .catch(() => toast.error("Something went wrong, please try again"));
+      });
     }
   };
 
@@ -123,14 +138,18 @@ export function Quiz({
                 onSelect={onSelect}
                 status={status}
                 selectedOption={selectedOption}
-                disabled={false}
+                disabled={pending}
                 type={challenge.type}
               />
             </div>
           </div>
         </div>
       </div>
-      <Footer disabled={pending} status={status} onCheck={onContinue} />
+      <Footer
+        disabled={pending || !selectedOption}
+        status={status}
+        onCheck={onContinue}
+      />
     </>
   );
 }

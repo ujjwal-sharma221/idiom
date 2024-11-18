@@ -63,7 +63,7 @@ const main = async () => {
         imageSrc: "/challenge-items/man.svg",
         correct: true,
         text: "el hombre",
-        audioSrc: "/audio",
+        audioSrc: "/audio/es_man.mp3",
       },
       {
         id: 2,
@@ -71,7 +71,7 @@ const main = async () => {
         imageSrc: "/challenge-items/woman.svg",
         correct: false,
         text: "la mujer",
-        audioSrc: "/audio",
+        audioSrc: "/audio/es_woman.mp3",
       },
       {
         id: 3,
@@ -79,7 +79,7 @@ const main = async () => {
         imageSrc: "/challenge-items/robot.svg",
         correct: false,
         text: "el robot",
-        audioSrc: "/audio",
+        audioSrc: "/audio/el_robot.mp3",
       },
     ]);
 

@@ -17,8 +17,8 @@ interface UnitProps {
 }
 
 export function Unit({
-  id,
-  order,
+  // id,
+  // order,
   title,
   description,
   lessons,

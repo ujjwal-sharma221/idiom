@@ -1,14 +1,17 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useTransition } from "react";
 import { InfinityIcon, XIcon } from "lucide-react";
 import Image from "next/image";
+import { toast } from "sonner";
 
 import { challengeOptionsType } from "@/lib/types/schem-types";
 import { Progress } from "@/components/ui/progress";
 import { useExitModal } from "@/store/use-exit-modal";
 import { QuestionBubble } from "./question-bubble";
 import { CurrentChallenge } from "./current-challenge";
+import { Footer } from "./footer";
+import { upsertChallengeProgress } from "@/actions/challenge-progress";
 
 interface QuizProps {
   initialPercentage: number;
@@ -19,7 +22,7 @@ interface QuizProps {
 }
 
 export function Quiz({
-  intialLessonId,
+  // intialLessonId,
   initialHearts,
   initialPercentage,
   initialLessonChallenges,
@@ -34,6 +37,10 @@ export function Quiz({
     );
     return incompletedIndex === -1 ? 0 : incompletedIndex;
   });
+  const [selectedOption, setSelectedOption] = useState<number>();
+  const [status, setStatus] = useState<"none" | "correct" | "wrong">("none");
+
+  const [pending, startTransition] = useTransition();
 
   const challenge = challenges[activeIndex];
   const options = challenge.challengeOptions ?? [];
@@ -42,6 +49,57 @@ export function Quiz({
     challenge.type === "ASSIST"
       ? "Select the correct meaning"
       : challenge.question;
+
+  const onSelect = (id: number) => {
+    if (status !== "none") return;
+    setSelectedOption(id);
+  };
+
+  const onNext = () => {
+    setActiveIndex((curr) => curr + 1);
+  };
+
+  const onContinue = () => {
+    if (!selectedOption) return;
+
+    if (status === "wrong") {
+      setStatus("none");
+      setSelectedOption(undefined);
+      return;
+    }
+
+    if (status === "correct") {
+      onNext();
+      setStatus("none");
+      setSelectedOption(undefined);
+      return;
+    }
+
+    const correctOption = options.find((option) => option.correct);
+    if (!correctOption) return;
+
+    if (correctOption && correctOption.id === selectedOption) {
+      startTransition(() => {
+        upsertChallengeProgress(challenge.id)
+          .then((res) => {
+            if (res?.error === "hearts") {
+              console.error("Not enough hearts");
+              return;
+            }
+
+            setStatus("correct");
+            setPercentage((prev) => prev + 100 / challenges.length);
+
+            if (initialPercentage === 100) {
+              setHearts((prev) => Math.min(prev + 1, 5));
+            }
+          })
+          .catch(() => toast.error("Something went wrong, try again"));
+      });
+    } else {
+      console.log("wrong, you are gay");
+    }
+  };
 
   return (
     <>
@@ -62,9 +120,9 @@ export function Quiz({
               )}
               <CurrentChallenge
                 options={options}
-                onSelect={() => {}}
-                status="none"
-                selectedOption={undefined}
+                onSelect={onSelect}
+                status={status}
+                selectedOption={selectedOption}
                 disabled={false}
                 type={challenge.type}
               />
@@ -72,6 +130,7 @@ export function Quiz({
           </div>
         </div>
       </div>
+      <Footer disabled={pending} status={status} onCheck={onContinue} />
     </>
   );
 }

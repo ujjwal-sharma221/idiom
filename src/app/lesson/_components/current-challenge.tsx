@@ -1,4 +1,6 @@
 import Image from "next/image";
+import { useCallback } from "react";
+import { useAudio, useKey } from "react-use";
 
 import { cn } from "@/lib/utils";
 import { challengeOptions, challenges } from "../../../../db/schema";
@@ -36,7 +38,7 @@ export function CurrentChallenge({
           text={option.text}
           imageSrc={option.imageSrc}
           shortCut={`${idx + 1}`}
-          selected={true || selectedOption === option.id}
+          selected={selectedOption === option.id}
           onClick={() => onSelect(option.id)}
           status={status}
           audioSrc={option.audioSrc}
@@ -62,7 +64,7 @@ interface CardProps {
 }
 
 function Card({
-  id,
+  // id,
   audioSrc,
   imageSrc,
   onClick,
@@ -73,9 +75,21 @@ function Card({
   selected,
   status,
 }: CardProps) {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [audio, _, controls] = useAudio({ src: audioSrc || "" });
+
+  const handleClick = useCallback(() => {
+    if (disabled) return;
+
+    controls.play();
+    onClick();
+  }, [disabled, onClick, controls]);
+
+  useKey(shortCut, handleClick, {}, [handleClick]);
+
   return (
     <div
-      onClick={() => {}}
+      onClick={handleClick}
       className={cn(
         "h-full border-2 rounded-xl hover:bg-black/5 p-4 lg:p-6 cursor-pointer ",
         selected && "bg-[#EBEAFF]",
@@ -89,6 +103,7 @@ function Card({
         type === "ASSIST" && "lg:p-3 w-full",
       )}
     >
+      {audio}
       {imageSrc && (
         <div className="relative aspect-square mb-4 max-h-[80px] lg:max-h-[150px] w-full">
           <Image src={imageSrc} alt={text} fill />
@@ -105,7 +120,7 @@ function Card({
         <p
           className={cn(
             "text-zinc-700 text-sm lg:text-base",
-            selected && "text-sky-500",
+            selected && "text-[#FF2929]",
             selected && status === "correct" && "text-green-500",
             selected && status === "wrong" && "text-white",
           )}
@@ -115,7 +130,7 @@ function Card({
         <div
           className={cn(
             "lg:w-[30px] lg:h-[30px] h-[20px] border-2 flex items-center justify-center rounded-lg lg:text-[15px] text-xs font-semibold",
-            selected && "border-sky-300 text-sky-500",
+            selected && "border-[#FF2929] text-[#FF2929]",
             selected &&
               status === "correct" &&
               "border-green-500 text-green-500",

@@ -7,6 +7,7 @@ import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { POINTS_TO_REFIL } from "@/lib/constant";
 import { refilHearts } from "@/actions/refil.hearts.actions";
+import { createStripeUrl } from "@/actions/user.subscription.action";
 
 interface ShopProps {
   hearts: number;
@@ -14,7 +15,7 @@ interface ShopProps {
   hasActiveSubscription: boolean;
 }
 
-export function Items({ hearts, points }: ShopProps) {
+export function Items({ hearts, points, hasActiveSubscription }: ShopProps) {
   const [pending, startTransition] = useTransition();
 
   const onRefilHearts = () => {
@@ -22,6 +23,18 @@ export function Items({ hearts, points }: ShopProps) {
 
     startTransition(() => {
       refilHearts().catch(() => toast.error("Something went wrong"));
+    });
+  };
+
+  const onUpgrade = () => {
+    startTransition(() => {
+      createStripeUrl()
+        .then((res) => {
+          if (res.data) {
+            window.location.href = res.data;
+          }
+        })
+        .catch(() => toast.error("Something went wrong"));
     });
   };
 
@@ -52,6 +65,22 @@ export function Items({ hearts, points }: ShopProps) {
               <p>{POINTS_TO_REFIL}</p>
             </div>
           )}
+        </Button>
+      </div>
+      <div className="flex items-center w-full p-4 pt-8 gap-x-4 border-t-2">
+        <Image
+          src="/icons/unlimited.svg"
+          alt="unlimited"
+          height={60}
+          width={60}
+        />
+        <div className="flex-1 ">
+          <p className="text-base lg:text-xl text-zinc-800 font-semibold">
+            Unlimited Hearts
+          </p>
+        </div>
+        <Button className="" onClick={onUpgrade} disabled={pending}>
+          {hasActiveSubscription ? "Settings" : "Upgrade"}
         </Button>
       </div>
     </ul>

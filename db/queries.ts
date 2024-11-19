@@ -9,7 +9,9 @@ import {
   lessons,
   units,
   userProgress,
+  userSubscription,
 } from "./schema";
+import { DAY_IN_MS } from "@/lib/constant";
 
 export const getCourses = cache(async () => {
   const data = await db.query.courses.findMany();
@@ -184,4 +186,21 @@ export const getLessonPercentage = cache(async () => {
     Math.round(completedChallenges.length / lesson.challenges.length) * 100;
 
   return percentage;
+});
+
+export const getUserSubscription = cache(async () => {
+  const { getUser } = getKindeServerSession();
+  const user = await getUser();
+  if (!user) return null;
+
+  const data = await db.query.userSubscription.findFirst({
+    where: eq(userSubscription.userId, user.id),
+  });
+  if (!data) return null;
+
+  const isActive =
+    data.stripePriceId &&
+    data.stripCurrentPeriodEnd.getTime()! + DAY_IN_MS > Date.now();
+
+  return { ...data, isActive: !!isActive };
 });
